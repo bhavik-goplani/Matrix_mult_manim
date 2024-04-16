@@ -89,7 +89,7 @@ class CannonScene(Scene):
         arrows = VGroup()
         texts = VGroup()
 
-        step_0 = Text("Step 0: Circular shift j-th column of matrix B's blocks j positions to the left", color=WHITE).scale(0.6)
+        step_0 = Text("Step 0: Circular shift j-th column of matrix B's blocks j positions up", color=WHITE).scale(0.6)
         step_0.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
 
         B.move_to(LEFT * 4)
@@ -107,7 +107,7 @@ class CannonScene(Scene):
             self.play(Create(arrow), Write(text))
             self.wait(1)
 
-        self.B_0 = self.circularShiftUp(B)
+        self.B_0 = self.circularShiftUp1(B)
         self.play(FadeOut(B), FadeOut(arrows), FadeOut(texts))
         pass
 
@@ -125,7 +125,7 @@ class CannonScene(Scene):
                 # Copy the element at the shifted position in the original matrix
                 element = matrix[i][(j+i)%3].copy()
                 # Position the copied element to the right of the original matrix
-                self.play(element.animate.move_to(matrix[i][j].get_center() + RIGHT*8), run_time=2)
+                self.play(element.animate.move_to(matrix[i][j].get_center() + RIGHT*6), run_time=2)
                 # Add the copied element to the row
                 elements.append(element)
                 row.add(element)
@@ -148,6 +148,24 @@ class CannonScene(Scene):
                 elements.append(element)
                 row.add(element)
             new_matrix.arrange(DOWN, buff=0.1*scale)
+        self.wait(1)
+
+        self.play(*[FadeOut(element) for element in elements], run_time=2)
+        return new_matrix
+    
+    def circularShiftUp1(self, matrix):
+        scale = 0.8
+        new_matrix = VGroup()
+        elements = []
+
+        for i in range(3):
+            col = VGroup()
+            for j in range(3):
+                element = matrix[(j+i)%3][i].copy()
+                self.play(element.animate.move_to(matrix[j][i].get_center() + RIGHT*6), run_time=2)
+                elements.append(element)
+                col.add(element)
+            new_matrix.arrange(RIGHT, buff=0.1*scale)
         self.wait(1)
 
         self.play(*[FadeOut(element) for element in elements], run_time=2)
