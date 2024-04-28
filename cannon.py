@@ -1,4 +1,7 @@
 from manim import *
+import copy
+
+config.max_files_cached = 500
 
 class CannonScene(Scene):
     def __init__ (self, **kwargs):
@@ -6,15 +9,23 @@ class CannonScene(Scene):
         self.A = self.createSquareMatrix(3, "A", BLUE, 0.8, 0.5)
         self.B = self.createSquareMatrix(3, "B", GREEN, 0.8, 0.5)
         self.P = self.createSquareMatrix(3, "P", RED, 0.8, 0.2)
-        self.C = self.createSquareMatrix(3, "C", ORANGE, 0.8, 0.5)
+        self.C = self.createSquareMatrix(3, "C", ORANGE, 0.8, 0.5).scale(0.6)
         self.title = Text("Cannon's Algorithm", color=WHITE).to_edge(UP + LEFT).scale(0.8)
         self.A_0 = None
+        self.B_0 = None
+        self.A_1 = None
+        self.B_1 = None
+        self.A_2 = None
+        self.B_2 = None
 
     def construct(self):
         
         self.play(Write(self.title))
         self.animateInitial()
+        
         self.animateStep0()
+        self.animateStep1()
+        self.animateStep2()
 
         self.play(FadeOut(self.title))
         self.animateEnd()
@@ -115,17 +126,154 @@ class CannonScene(Scene):
         self.play(FadeOut(B), FadeOut(arrows), FadeOut(texts), FadeOut(step_0))
         self.wait(1)
 
-        self.A_0.move_to(LEFT * 4).scale(0.6)
-        self.B_0.move_to(RIGHT * 4).scale(0.6)
+        A_0_copy = copy.deepcopy(self.A_0)
+        B_0_copy = copy.deepcopy(self.B_0)
+
+        A_0_copy.move_to(LEFT * 4).scale(0.6)
+        B_0_copy.move_to(RIGHT * 4).scale(0.6)
         P.move_to(ORIGIN).scale(1.2)
 
-        self.play(Create(self.A_0), Create(self.B_0), Create(P))
+        self.play(Create(A_0_copy), Create(B_0_copy), Create(P))
         self.wait(1)
-        self.parallelDistributeMatrix(self.A_0, self.B_0, P)
 
-        self.play(FadeOut(self.A_0), FadeOut(self.B_0), FadeOut(P))
+        self.parallelDistributeMatrix(A_0_copy, B_0_copy, P)
 
+        self.play(FadeOut(P))
+        self.wait(1)
         pass
+
+    def animateStep1(self):
+        A = self.A_0
+        B = self.B_0
+        P = self.P
+        arrows = VGroup()
+        texts = VGroup()
+        step_1 = Text("Step 1: Circular shift each row of matrix A's blocks 1 position to the left", color=WHITE).scale(0.6)
+        step_1.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
+
+        A.move_to(LEFT * 4)
+        self.play(Write(step_1))
+        self.play(Create(A))
+        self.wait(1)
+
+        for i in range(3):
+            arrow = Arrow(A[i].get_center()+ RIGHT*2, A[i].get_center() + RIGHT*1.5, buff=0)
+            arrows.add(arrow)
+            text = Text(f'Shift by 1').scale(0.3)
+            texts.add(text)
+            text.next_to(arrow, RIGHT, buff=0.5)
+            self.play(Create(arrow), Write(text))
+            self.wait(1)
+
+        self.A_1 = self.circularShiftLeftOnePosition(A)
+        self.play(FadeOut(A), FadeOut(arrows), FadeOut(texts), FadeOut(step_1))
+        arrows = VGroup()
+        texts = VGroup()
+
+        step_1 = Text("Step 1: Circular shift each column of matrix B's blocks 1 position up", color=WHITE).scale(0.6)
+        step_1.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
+
+        B.move_to(LEFT * 4)
+        
+        self.play(Write(step_1))
+        self.play(Create(B))
+        self.wait(1)
+
+        for i in range(3):
+            arrow = Arrow(B[i][1].get_center() + DOWN*2, B[i][1].get_center() + DOWN*1.5, buff=0)
+            arrows.add(arrow)
+            text = Text(f'Shift by 1').scale(0.3)
+            texts.add(text)
+            text.next_to(arrow, DOWN, buff=0.5)
+            self.play(Create(arrow), Write(text))
+            self.wait(1)
+        
+        self.B_1 = self.circularShiftUpOnePosition(B)
+        self.play(FadeOut(B), FadeOut(arrows), FadeOut(texts), FadeOut(step_1))
+        self.wait(1)
+
+        A_1_copy = copy.deepcopy(self.A_1)
+        B_1_copy = copy.deepcopy(self.B_1)
+
+        A_1_copy.move_to(LEFT * 4).scale(0.6)
+        B_1_copy.move_to(RIGHT * 4).scale(0.6)
+        P.move_to(ORIGIN).scale(1.2)
+
+        self.play(Create(A_1_copy), Create(B_1_copy), Create(P))
+        self.wait(1)
+
+        self.parallelDistributeMatrix(A_1_copy, B_1_copy, P)
+
+        self.play(FadeOut(P))
+        self.wait(1)
+        pass
+
+    def animateStep2(self):
+        A = self.A_1
+        B = self.B_1
+        P = self.P
+        arrows = VGroup()
+        texts = VGroup()
+        step_2 = Text("Step 2: Circular shift each row of matrix A's blocks 1 position to the left", color=WHITE).scale(0.6)
+        step_2.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
+
+        A.move_to(LEFT * 4)
+        self.play(Write(step_2))
+        self.play(Create(A))
+        self.wait(1)
+
+        for i in range(3):
+            arrow = Arrow(A[i].get_center()+ RIGHT*2, A[i].get_center() + RIGHT*1.5, buff=0)
+            arrows.add(arrow)
+            text = Text(f'Shift by 1').scale(0.3)
+            texts.add(text)
+            text.next_to(arrow, RIGHT, buff=0.5)
+            self.play(Create(arrow), Write(text))
+            self.wait(1)
+
+        self.A_2 = self.circularShiftLeftOnePosition(A)
+        self.play(FadeOut(A), FadeOut(arrows), FadeOut(texts), FadeOut(step_2))
+        arrows = VGroup()
+        texts = VGroup()
+
+        step_2 = Text("Step 2: Circular shift each column of matrix B's blocks 1 position up", color=WHITE).scale(0.6)
+        step_2.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
+
+        B.move_to(LEFT * 4)
+        
+        self.play(Write(step_2))
+        self.play(Create(B))
+        self.wait(1)
+
+        for i in range(3):
+            arrow = Arrow(B[i][1].get_center() + DOWN*2, B[i][1].get_center() + DOWN*1.5, buff=0)
+            arrows.add(arrow)
+            text = Text(f'Shift by 1').scale(0.3)
+            texts.add(text)
+            text.next_to(arrow, DOWN, buff=0.5)
+            self.play(Create(arrow), Write(text))
+            self.wait(1)
+        
+        self.B_2 = self.circularShiftUpOnePosition(B)
+        self.play(FadeOut(B), FadeOut(arrows), FadeOut(texts), FadeOut(step_2))
+        self.wait(1)
+
+        A_2_copy = copy.deepcopy(self.A_2)
+        B_2_copy = copy.deepcopy(self.B_2)
+
+        A_2_copy.move_to(LEFT * 4).scale(0.6)
+        B_2_copy.move_to(RIGHT * 4).scale(0.6)
+        P.move_to(ORIGIN).scale(1.2)
+
+        self.play(Create(A_2_copy), Create(B_2_copy), Create(P))
+        self.wait(1)
+
+        self.parallelDistributeMatrix(A_2_copy, B_2_copy, P)
+
+        self.play(FadeOut(P))
+        self.wait(1)
+        pass
+
 
     def circularShiftLeft(self, matrix):
         # Create a new VGroup to hold the new matrix
@@ -169,6 +317,9 @@ class CannonScene(Scene):
 
     def parallelDistributeMatrix(self, A, B, P):
         # Distribute each element in A and B to P in parallel to compute the product
+        text = MathTex(r"\text{Each processor } P_{i,j} \text{ locally updates matrix block } C_{i,j} \text{ in parallel.}").scale(0.6)
+        text.next_to(self.title, DOWN, buff=0.5).align_to(self.title, LEFT)
+        self.play(Write(text))
         animations = [
             ApplyMethod(A[i][j].move_to, P[i][j].get_center() + UP*0.25 + LEFT*0.25)
             for i in range(len(A))
@@ -181,8 +332,6 @@ class CannonScene(Scene):
 
         self.play(*animations, run_time=3)
         self.wait(2)
-
-        self.C.scale(0.6)
 
         animationYellow = []
         animationMultiply = []
@@ -214,8 +363,45 @@ class CannonScene(Scene):
         self.play(*animationFadeOut, run_time=1)
         self.wait(1)
         self.play(*animationTransform, run_time=2)
-        self.wait(2)
+        self.wait(1)
+        self.play(FadeOut(self.C), FadeOut(A), FadeOut(B), FadeOut(text))
+        self.wait(1)
         pass
+
+
+    def circularShiftLeftOnePosition(self, matrix):
+        new_matrix = VGroup()
+        elements = []
+
+        for i in range(3):
+            row = VGroup()
+            for j in range(3):
+                element = matrix[i][(j+1)%3].copy()
+                self.play(element.animate.move_to(matrix[i][j].get_center() + RIGHT*6), run_time=2)
+                elements.append(element)
+                row.add(element)
+            new_matrix.add(row)
+        self.wait(1)
+
+        self.play(*[FadeOut(element) for element in elements], run_time=2)
+        return new_matrix
+    
+    def circularShiftUpOnePosition(self, matrix):
+        new_matrix = VGroup()
+        elements = []
+
+        for i in range(3):
+            col = VGroup()
+            for j in range(3):
+                element = matrix[i][(j+1)%3].copy()
+                self.play(element.animate.move_to(matrix[i][j].get_center() + RIGHT*6), run_time=2)
+                elements.append(element)
+                col.add(element)
+            new_matrix.add(col)
+        self.wait(1)
+
+        self.play(*[FadeOut(element) for element in elements], run_time=2)
+        return new_matrix
 
     def animateEnd(self):
         # Create the shape of a heart using a Polygon
