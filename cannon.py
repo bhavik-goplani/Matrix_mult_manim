@@ -23,6 +23,7 @@ class CannonScene(Scene):
         self.play(Write(self.title))
         self.animateInitial()
         
+        self.P.scale(1.2)
         self.animateStep0()
         self.animateStep1()
         self.animateStep2()
@@ -131,7 +132,7 @@ class CannonScene(Scene):
 
         A_0_copy.move_to(LEFT * 4).scale(0.6)
         B_0_copy.move_to(RIGHT * 4).scale(0.6)
-        P.move_to(ORIGIN).scale(1.2)
+        P.move_to(ORIGIN)
 
         self.play(Create(A_0_copy), Create(B_0_copy), Create(P))
         self.wait(1)
@@ -197,7 +198,7 @@ class CannonScene(Scene):
 
         A_1_copy.move_to(LEFT * 4).scale(0.6)
         B_1_copy.move_to(RIGHT * 4).scale(0.6)
-        P.move_to(ORIGIN).scale(1.2)
+        P.move_to(ORIGIN)
 
         self.play(Create(A_1_copy), Create(B_1_copy), Create(P))
         self.wait(1)
@@ -263,7 +264,7 @@ class CannonScene(Scene):
 
         A_2_copy.move_to(LEFT * 4).scale(0.6)
         B_2_copy.move_to(RIGHT * 4).scale(0.6)
-        P.move_to(ORIGIN).scale(1.2)
+        P.move_to(ORIGIN)
 
         self.play(Create(A_2_copy), Create(B_2_copy), Create(P))
         self.wait(1)
