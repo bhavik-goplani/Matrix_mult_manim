@@ -4,8 +4,7 @@ This project provides an animation of Cannon's and Fox's distributed memory matr
 
 ## Usage
 
-See `fox.py` for Fox's algorithm animation code
-See `cannon.py` for Cannon's algorithm animation code
+See `fox.py` for Fox's algorithm animation code and see `cannon.py` for Cannon's algorithm animation code.
 
 ## Videos
 
